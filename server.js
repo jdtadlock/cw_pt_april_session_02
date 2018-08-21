@@ -44,7 +44,7 @@ app.listen(port, function () {
 
 
 
-if ( !sequelize ) console.log('No environnement variable found.');
+if ( !sequelize ) console.log('No environonment variable found.');
 
 
 
