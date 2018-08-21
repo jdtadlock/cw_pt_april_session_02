@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var exphbs = require('express-handlebars');
 var aws = require('aws-sdk');
+var Sequelize = require('sequelize');
 
 // var s3 = new aws.S3({
 //   db_url: process.env.DATABASE_URL
@@ -10,7 +11,7 @@ var aws = require('aws-sdk');
 
 var port = process.env.PORT || 5000;
 
-var sequelize = require('sequelize-heroku').connect(require('sequelize'));
+var sequelize = require('sequelize-heroku').connect(Sequelize);
 
 if (sequelize) {
   const User = sequelize.define('user', {
