@@ -20,12 +20,12 @@ const User = sequelize.define('user', {
 });
 
 // force: true will drop the table if it already exists
-User.sync({ force: true }).then(() => {
+User.sync().then(() => {
   // Table created
-  // return User.create({
-  //   firstName: 'John',
-  //   lastName: 'Hancock'
-  // });
+  return User.create({
+    firstName: 'John',
+    lastName: 'Hancock'
+  });
 });
 
  
@@ -37,7 +37,10 @@ app.set('view engine', 'handlebars');
 
 app.get('/', function(request, response) {
   // Render refers to a View Engine
-  response.render('index');
+  User.findAll()
+    .then(function(users) {
+      response.render('index', {users: users});
+    });
   // response.sendFile(path.join(__dirname, 'html/index.html'));
 });
 
