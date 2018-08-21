@@ -4,6 +4,32 @@ var path = require('path');
 var exphbs = require('express-handlebars');
 var port = process.env.PORT || 5000;
 
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize('cw_session_01', 'root', '', {
+  dialect: 'mysql',
+  operatorsAliases: false
+});
+
+const User = sequelize.define('user', {
+  firstName: {
+    type: Sequelize.STRING
+  },
+  lastName: {
+    type: Sequelize.STRING
+  }
+});
+
+// force: true will drop the table if it already exists
+User.sync({ force: true }).then(() => {
+  // Table created
+  // return User.create({
+  //   firstName: 'John',
+  //   lastName: 'Hancock'
+  // });
+});
+
+ 
+
 var app = express(); // {}
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
