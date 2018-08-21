@@ -27,7 +27,7 @@ var User = sequelize.define('user', {
   }
 });
 
-User.sync().then(() => console.log('synced'));
+User.sync().then(function() { console.log('synced') });
 
 app.get('/', function (request, response) {
   // Render refers to a View Engine
