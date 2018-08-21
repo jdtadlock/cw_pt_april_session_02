@@ -1,0 +1,2 @@
+- general knowledge
+- heroku hiding config stuff
