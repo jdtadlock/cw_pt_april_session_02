@@ -2,10 +2,18 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var exphbs = require('express-handlebars');
+var aws = require('aws-sdk');
+
+var s3 = new aws.S3({
+  accessKeyId: process.env.S3_KEY,
+  secretAccessKey: process.env.S3_SECRET
+});
+
 var port = process.env.PORT || 5000;
 
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('cw_session_01', 'root', '', {
+  host: s3.DATABASE_URL,
   dialect: 'mysql',
   operatorsAliases: false
 });
