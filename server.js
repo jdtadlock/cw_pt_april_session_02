@@ -14,59 +14,44 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 
-if (sequelize) {
-  
-  var User = sequelize.define('user', {
-    firstName: {
-      type: Sequelize.STRING
-    },
-    lastName: {
-      type: Sequelize.STRING
-    }
-  });
+var User = sequelize.define('user', {
+  firstName: {
+    type: Sequelize.STRING
+  },
+  lastName: {
+    type: Sequelize.STRING
+  }
+});
 
-  // force: true will drop the table if it already exists
-  User.sync().then(() => {
-    // Table created
-    return User.create({
-      firstName: 'John',
-      lastName: 'Hancock'
+User.sync().then(() => console.log('synced'));
+
+app.get('/', function (request, response) {
+  // Render refers to a View Engine
+  User.findAll()
+    .then(function (users) {
+      response.render('index', { users: users });
     });
-  });
+  // response.sendFile(path.join(__dirname, 'html/index.html'));
+});
+
+app.listen(port, function () {
+  console.log(`Listening on port ${port}`);
+});
 
 
-  sequelize.authenticate().then(function () {
-    var config = sequelize.connectionManager.config;
-    console.log('sequelize-heroku: Connected to ' + config.host + ' as ' + config.username + '.');
 
-    sequelize.query('SELECT 1+1 as test').then(function (res) {
-      console.log('1+1=' + res[0][0].test);
-    });
+if ( !sequelize ) console.log('No environnement variable found.');
 
-  }).catch(function (err) {
-    var config = sequelize.connectionManager.config;
-    console.log('Sequelize: Error connecting ' + config.host + ' as ' + config.user + ': ' + err);
-  });
 
-  app.get('/', function (request, response) {
-    // Render refers to a View Engine
-    User.findAll()
-      .then(function (users) {
-        response.render('index', { users: users });
-      });
-    // response.sendFile(path.join(__dirname, 'html/index.html'));
-  });
 
-  app.listen(port, function () {
-    console.log(`Listening on port ${port}`);
-  });
-} else {
-  console.log('No environnement variable found.');
-}
+
+
+
+
+
 
 // var Sequelize = require('sequelize');
 // var sequelize = new Sequelize('cw_session_01', 'bd281b14c640dd', '1c629822', {
-//   host: 'mysql://bd281b14c640dd:1c629822@us-cdbr-iron-east-01.cleardb.net/heroku_df77992b0c37b87?reconnect=true',
 //   dialect: 'mysql',
 //   operatorsAliases: false
 // });
