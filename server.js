@@ -4,17 +4,19 @@ var path = require('path');
 var exphbs = require('express-handlebars');
 var aws = require('aws-sdk');
 var Sequelize = require('sequelize');
-
-// var s3 = new aws.S3({
-//   db_url: process.env.DATABASE_URL
-// });
+var sequelize = require('sequelize-heroku').connect(Sequelize);
 
 var port = process.env.PORT || 5000;
 
-var sequelize = require('sequelize-heroku').connect(Sequelize);
+var app = express(); // {}
+
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+
 
 if (sequelize) {
-  const User = sequelize.define('user', {
+  
+  var User = sequelize.define('user', {
     firstName: {
       type: Sequelize.STRING
     },
@@ -45,6 +47,19 @@ if (sequelize) {
     var config = sequelize.connectionManager.config;
     console.log('Sequelize: Error connecting ' + config.host + ' as ' + config.user + ': ' + err);
   });
+
+  app.get('/', function (request, response) {
+    // Render refers to a View Engine
+    User.findAll()
+      .then(function (users) {
+        response.render('index', { users: users });
+      });
+    // response.sendFile(path.join(__dirname, 'html/index.html'));
+  });
+
+  app.listen(port, function () {
+    console.log(`Listening on port ${port}`);
+  });
 } else {
   console.log('No environnement variable found.');
 }
@@ -60,21 +75,5 @@ if (sequelize) {
 
  
 
-var app = express(); // {}
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
-
-app.get('/', function(request, response) {
-  // Render refers to a View Engine
-  User.findAll()
-    .then(function(users) {
-      response.render('index', {users: users});
-    });
-  // response.sendFile(path.join(__dirname, 'html/index.html'));
-});
-
-app.listen(port, function() {
-  console.log(`Listening on port ${port}`);
-});
 
